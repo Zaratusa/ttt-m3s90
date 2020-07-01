@@ -91,7 +91,7 @@ end
 
 function SWEP:Reload()
 	if ((not self.dt.reloading) and IsFirstTimePredicted()
-		and self:Clip1() < self.Primary.ClipSize and self.Owner:GetAmmoCount(self.Primary.Ammo) > 0) then
+		and self:Clip1() < self.Primary.ClipSize and self.GetOwner():GetAmmoCount(self.Primary.Ammo) > 0) then
 		self:StartReload()
 	end
 end
@@ -101,7 +101,7 @@ function SWEP:StartReload()
 		self:SetIronsights(false)
 		if (IsFirstTimePredicted()) then
 			self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-			if (self:Clip1() < self.Primary.ClipSize and self.Owner:GetAmmoCount(self.Primary.Ammo) > 0) then
+			if (self:Clip1() < self.Primary.ClipSize and self.GetOwner():GetAmmoCount(self.Primary.Ammo) > 0) then
 				self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
 				self.reloadtimer = CurTime() + self:SequenceDuration()
 				self.dt.reloading = true
@@ -118,13 +118,13 @@ end
 
 function SWEP:Think()
 	if (self.dt.reloading and IsFirstTimePredicted()) then
-		if (self.Owner:KeyDown(IN_ATTACK)) then
+		if (self.GetOwner():KeyDown(IN_ATTACK)) then
 			self:FinishReload()
 			return
 		end
 
 		if (self.reloadtimer <= CurTime()) then
-			if (self.Owner:GetAmmoCount(self.Primary.Ammo)) <= 0 then
+			if (self.GetOwner():GetAmmoCount(self.Primary.Ammo)) <= 0 then
 				self:FinishReload()
 			elseif (self:Clip1() < self.Primary.ClipSize) then
 				self:PerformReload()
@@ -139,9 +139,9 @@ function SWEP:PerformReload()
 	-- Prevent normal shooting in between reloads
 	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 
-	if (self:Clip1() < self.Primary.ClipSize and self.Owner:GetAmmoCount(self.Primary.Ammo) > 0) then
+	if (self:Clip1() < self.Primary.ClipSize and self.GetOwner():GetAmmoCount(self.Primary.Ammo) > 0) then
 		self:SendWeaponAnim(ACT_VM_RELOAD)
-		self.Owner:RemoveAmmo(1, self.Primary.Ammo, false)
+		self.GetOwner():RemoveAmmo(1, self.Primary.Ammo, false)
 		self:SetClip1(self:Clip1() + 1)
 		self.reloadtimer = CurTime() + self:SequenceDuration()
 	end
